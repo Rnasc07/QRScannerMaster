@@ -1,0 +1,25 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,700,300);
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+hr {
+    margin-top: 32px;
+}
+input[type="file"] {
+    display: block;
+    margin-bottom: 16px;
+}
+div {
+    margin-bottom: 16px;
+}
+#flash-toggle {
+    display: none;
+}
