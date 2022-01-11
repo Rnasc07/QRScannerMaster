@@ -52,8 +52,8 @@
 
     // Função com objetivo de setar o resultado na div "cam-qr-result" que é passada na callback da inicialização do QrScanner
     function setResult(display, result) {
-        label.innerText = result;
-        label.style.color = 'teal';
+        display.textContent = result;
+        display.style.color = 'teal';
     }
 
     // Inicialização do QrScanner passando seus devidos argumentos
