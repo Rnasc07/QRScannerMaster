@@ -88,7 +88,9 @@
         }));
     });
 
-    QrScanner.hasCamera().then(hasCamera => camHasCamera.textContent = hasCamera);
+    QrScanner.hasCamera().then(hasCamera => {
+        camHasCamera.textContent = (hasCamera) ? 'Ativo' : 'Inativo';
+    });
 
     // for debugging
     window.scanner = scanner;
