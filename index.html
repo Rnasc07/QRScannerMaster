@@ -27,18 +27,15 @@
         <option value="user">Câmera frontal</option>
     </select>
 </div>
+<br>
 
 <!-- FEEDBACK DO CONTEÚDO LIDO -->
+<b>Resposta detectada do QRCode: </b>
+<span id="cam-qr-result">...</span>
 <br>
-<b>Detected QR code: </b>
-<span id="cam-qr-result">None</span>
 <br>
-<b>Last detected at: </b>
-<span id="cam-qr-result-timestamp"></span>
-<div id="test-cam-qr-result"></div>
 
-<br>
-<br>
+<!-- AÇÕES PARA O SCANNER -->
 <button id="start-button">Iniciar leitura</button>
 <button id="stop-button">Interromper leitura</button>
 <hr>
@@ -47,39 +44,28 @@
     import QrScanner from "./qr-scanner.min.js";
     QrScanner.WORKER_PATH = './qr-scanner-worker.min.js';
 
+    // Selecionando os elementos necessários
     const video = document.getElementById('qr-video');
     const camHasCamera = document.getElementById('cam-has-camera');
     const camList = document.getElementById('cam-list');
-
     const camQrResult = document.getElementById('cam-qr-result');
-    const camQrResultTimestamp = document.getElementById('cam-qr-result-timestamp');
 
-    function setResult(label, result) {
-        label.textContent = result;
-
-        console.log(result);
-        console.log(label);
-
-        document.getElementById('test-cam-qr-result').innerText = result;
-
-        camQrResultTimestamp.textContent = new Date().toString();
+    // Função com objetivo de setar o resultado na div "cam-qr-result" que é passada na callback da inicialização do QrScanner
+    function setResult(display, result) {
+        label.innerText = result;
         label.style.color = 'teal';
-        clearTimeout(label.highlightTimeout);
-        label.highlightTimeout = setTimeout(() => label.style.color = 'inherit', 100);
     }
 
-    // ####### Web Cam Scanning #######
+    // Inicialização do QrScanner passando seus devidos argumentos
     const scanner = new QrScanner(video, result => setResult(camQrResult, result), error => {
         camQrResult.textContent = error;
         camQrResult.style.color = 'inherit';
     });
 
+    // DISPONIBILIZAR UMA LISTA DAS CÂMERAS DISPONÍVEIS AO INICIAR A APLICAÇÃO
     scanner.start().then(() => {
         updateFlashAvailability();
-        // List cameras after the scanner started to avoid listCamera's stream and the scanner's stream being requested
-        // at the same time which can result in listCamera's unconstrained stream also being offered to the scanner.
-        // Note that we can also start the scanner after listCameras, we just have it this way around in the demo to
-        // start the scanner earlier.
+
         QrScanner.listCameras(true).then(cameras => cameras.forEach(camera => {
             const option = document.createElement('option');
             option.value = camera.id;
@@ -88,17 +74,16 @@
         }));
     });
 
-    QrScanner.hasCamera().then(hasCamera => {
-        camHasCamera.textContent = (hasCamera) ? 'Ativo' : 'Inativo';
-    });
-
-    // for debugging
-    window.scanner = scanner;
-
     camList.addEventListener('change', event => {
         scanner.setCamera(event.target.value).then(updateFlashAvailability);
     });
 
+    // FEEDBACK SE ESTÁ CONSEGUINDO OU NÃO TER A IMAGEM DA CÂMERA
+    QrScanner.hasCamera().then(hasCamera => {
+        camHasCamera.textContent = (hasCamera) ? 'Ativo' : 'Inativo';
+    });
+
+    // INICIAR OU INTERROMPER A LEITURA
     document.getElementById('start-button').addEventListener('click', () => {
         scanner.start();
     });
